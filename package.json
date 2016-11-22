@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fatlinesofcode/ngDraggable.git"
+    "url": "git+https://github.com/vrsoftwaredev/ngDraggable.git"
   },
   "author": "philip andrews",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fatlinesofcode/ngDraggable/issues"
+    "url": "https://github.com/vrsoftwaredev/ngDraggable/issues"
   },
-  "homepage": "https://github.com/fatlinesofcode/ngDraggable#readme"
+  "homepage": "https://github.com/vrsoftwaredev/ngDraggable#readme"
 }
