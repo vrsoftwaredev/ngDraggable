@@ -30,6 +30,7 @@ angular.module("ngDraggable", [])
                 var _moveEvents = 'touchmove mousemove';
                 var _releaseEvents = 'touchend mouseup';
                 var _dragHandle;
+				var _dragHeader = attrs.ngDragHeader;
 
                 // to identify the element in order to prevent getting superflous events when a single element has both drag and drop directives on it.
                 var _myid = scope.$id;
@@ -47,6 +48,7 @@ angular.module("ngDraggable", [])
                 var allowTransform = angular.isDefined(attrs.allowTransform) ? scope.$eval(attrs.allowTransform) : true;
 
                 var getDragData = $parse(attrs.ngDragData);
+				
 
                 // deregistration function for mouse move events in $rootScope triggered by jqLite trigger handler
                 var _deregisterRootMoveListener = angular.noop;
@@ -102,17 +104,28 @@ angular.module("ngDraggable", [])
                         angular.isDefined(angular.element(evt.target).attr("ng-cancel-drag"))
                     );
                 };
+				
+				var isHeaderElement = function (target) {
+                    return (
+                        angular.isDefined(angular.element(target).attr("ng-header")) || (target != null && isHeaderElement(target.parentElement))
+                    );
+                };
                 /*
                  * When the element is clicked start the drag behaviour
                  * On touch devices as a small delay so as not to prevent native window scrolling
                  */
                 var onpress = function(evt) {
                     if(! _dragEnabled)return;
-
+					
                     if (isClickableElement(evt)) {
                         return;
                     }
+					
+					if(!_hasTouch && _dragHeader && !isHeaderElement(evt.target)){
+						return;
+					}
 
+					
                     if (evt.type == "mousedown" && evt.button != 0) {
                         // Do not start dragging on right-click
                         return;
@@ -120,10 +133,10 @@ angular.module("ngDraggable", [])
 
                     if(_hasTouch){
                         cancelPress();
-                        _pressTimer = setTimeout(function(){
+                        _pressTimer = setTimeout(function(){							
                             cancelPress();
                             onlongpress(evt);
-                        },100);
+                        },300);
                         $document.on(_moveEvents, cancelPress);
                         $document.on(_releaseEvents, cancelPress);
                     }else{
@@ -138,7 +151,7 @@ angular.module("ngDraggable", [])
                     $document.off(_releaseEvents, cancelPress);
                 };
 
-                var onlongpress = function(evt) {
+                var onlongpress = function(evt) {					
                     if(! _dragEnabled)return;
                     evt.preventDefault();
 
@@ -171,6 +184,9 @@ angular.module("ngDraggable", [])
                     // jqLite unfortunately only supports triggerHandler(...)
                     // See http://api.jquery.com/triggerHandler/
                     // _deregisterRootMoveListener = $rootScope.$on('draggable:_triggerHandlerMove', onmove);
+					
+					
+					
                     _deregisterRootMoveListener = $rootScope.$on('draggable:_triggerHandlerMove', function(event, origEvent) {
                         onmove(origEvent);
                     });
@@ -179,8 +195,9 @@ angular.module("ngDraggable", [])
                 var onmove = function (evt) {
                     if (!_dragEnabled)return;
                     evt.preventDefault();
-
-                    if (!element.hasClass('dragging')) {
+					
+					if (!element.hasClass('dragging')) {
+						window.navigator.vibrate(50);
                         _data = getDragData(scope);
                         element.addClass('dragging');
                         $rootScope.$broadcast('draggable:start', {x:_mx, y:_my, tx:_tx, ty:_ty, event:evt, element:element, data:_data});
@@ -191,6 +208,7 @@ angular.module("ngDraggable", [])
                             });
                         }
                     }
+					
 
                     _mx = ngDraggable.inputEvent(evt).pageX;//ngDraggable.getEventProp(evt, 'pageX');
                     _my = ngDraggable.inputEvent(evt).pageY;//ngDraggable.getEventProp(evt, 'pageY');
@@ -203,7 +221,25 @@ angular.module("ngDraggable", [])
                         _ty = _my - _mry - _dragOffset.top;
                     }
 
+					e = evt || window.event; 
+					var cursor = { y: 0 }; cursor.y = e.pageY; //Cursor YPos
+					var papaWindow = document.getElementById("tab-content-1");
+					var $pxFromTop = $(papaWindow).scrollTop();
+					var $userScreenHeight = $(papaWindow).height();
+
+					if (cursor.y > ($userScreenHeight * .90 )) {
+						//if ($pxFromTop < ($userScreenHeight * 3.2)) {
+							//papaWindow.scrollBy(0, ($userScreenHeight / 60));
+							document.getElementById("tab-content-1").scrollTop += ($userScreenHeight / 60);
+						//}
+						
+					} else if (cursor.y < (($userScreenHeight + $pxFromTop) * .10)) {
+						//papaWindow.scrollBy(0, -($userScreenHeight / 60));
+						document.getElementById("tab-content-1").scrollTop -= ($userScreenHeight / 60);
+					}
+										
                     moveElement(_tx, _ty);
+					
 
                     $rootScope.$broadcast('draggable:move', { x: _mx, y: _my, tx: _tx, ty: _ty, event: evt, element: element, data: _data, uid: _myid, dragOffset: _dragOffset });
                 };
