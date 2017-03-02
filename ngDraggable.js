@@ -5,7 +5,6 @@
 angular.module("ngDraggable", [])
     .service('ngDraggable', [function() {
 
-
         var scope = this;
         scope.inputEvent = function(event) {
             if (angular.isDefined(event.touches)) {
@@ -105,11 +104,12 @@ angular.module("ngDraggable", [])
                     );
                 };
 				
-				var isHeaderElement = function (target) {
+                var isHeaderElement = function (target) {
                     return (
-                        angular.isDefined(angular.element(target).attr("ng-header")) || (target != null && isHeaderElement(target.parentElement))
+                        (angular.isDefined(angular.element(target).attr("ng-header"))) || (target !== null  && angular.element(target).tagName !== "BUTTON" && isHeaderElement(target.parentElement))
                     );
                 };
+                
                 /*
                  * When the element is clicked start the drag behaviour
                  * On touch devices as a small delay so as not to prevent native window scrolling
@@ -121,10 +121,9 @@ angular.module("ngDraggable", [])
                         return;
                     }
 					
-					if(!_hasTouch && _dragHeader && !isHeaderElement(evt.target)){
-						return;
-					}
-
+                    if(!_hasTouch && _dragHeader && !isHeaderElement(evt.target)){
+                        return;
+                    }
 					
                     if (evt.type == "mousedown" && evt.button != 0) {
                         // Do not start dragging on right-click
