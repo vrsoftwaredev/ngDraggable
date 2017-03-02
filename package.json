@@ -1,19 +1,19 @@
 {
-  "name": "ngdraggable",
-  "version": "0.1.11",
+  "name": "vr-draggable",
+  "version": "1.0.0",
   "description": "Drag and drop module for Angular JS with support for touch devices",
-  "main": "ngDraggable.js",
+  "main": "vrDraggable.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vrsoftwaredev/ngDraggable.git"
+    "url": "git+https://github.com/vrsoftwaredev/vr-daggable.git"
   },
   "author": "philip andrews",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vrsoftwaredev/ngDraggable/issues"
+    "url": "https://github.com/vrsoftwaredev/vr-draggable/issues"
   },
-  "homepage": "https://github.com/vrsoftwaredev/ngDraggable#readme"
+  "homepage": "https://github.com/vrsoftwaredev/vr-draggable#readme"
 }
